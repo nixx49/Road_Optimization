@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Route Optimizer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            background-image: url('https://wallpapercave.com/wp/wp2793160.jpg');
+            /* Replace with your image */
+
+            background-size: cover;
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        #container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        a {
+            text-decoration: none;
+            color: rgb(8, 46, 143);
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 70%;
+            max-height: 400px;
+            /* Define a maximum height for the table */
+            overflow-y: auto;
+            /* Add vertical scrollbar when content exceeds the height */
+            margin: 20px;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid #ddd;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: center;
+        }
+
+        th {
+            background-color: rgb(9, 2, 39);
+            color: white;
+            border-radius: 5px 5px 0 0;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            margin: 5px;
+        }
+
+        .btn-container {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+        }
+
+        button {
+            background-color: rgb(12, 132, 165);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+        }
+
+        #footer {
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container">
+        <h1 style="color: rgb(9, 2, 39);">Route Optimizer</h1>
+        <a href="http://34.132.124.179/static/map/">View maps -></a>
+        <div class="btn-container">
+            <input type="text" name="" id="text_x" placeholder="Longitude" style="font-family: 'Poppins', sans-serif;">
+            <input type="text" name="" id="text_y" placeholder="Latitude" style="font-family: 'Poppins', sans-serif;">
+            <button id="add-btn"><i class="fas fa-plus"></i> Add</button>
+            <button id="send-data">Send Data to Flask</button>
+        </div>
+        <table id="data-table">
+            <thead>
+                <tr>
+                    <th>Longitude</th>
+                    <th>Latitude</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+    <div id="footer">
+        Powered by - Data Insight Team, Dialog Axiata
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#add-btn').click(function () {
+                var x_val = $('#text_x').val();
+                var y_val = $('#text_y').val();
+                if (x_val && y_val) {
+                    $("#data-table tbody").append('<tr><td>' + x_val + '</td><td>' + y_val + '</td></tr>');
+                    $('#text_x').val('');
+                    $('#text_y').val('');
+                } else {
+                    alert("Try again");
+                }
+            })
+
+            $("#send-data").click(function () {
+                // Create a 2D list to store x and y values
+                var data = [];
+                $("#data-table tbody tr").each(function () {
+                    var x = $(this).find("td:eq(0)").text();
+                    var y = $(this).find("td:eq(1)").text();
+                    data.push([x, y]);
+                });
+
+                // Send an AJAX request to Flask
+                $.ajax({
+                    type: "POST",
+                    timeout: 1200000,
+                    url: "http://34.132.124.179/generate/",
+                    data: JSON.stringify({ "data": data }),
+                    contentType: "application/json",
+                    success: function (response) {
+                        // Handle the response from Flask if needed
+                        console.log(response);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>
